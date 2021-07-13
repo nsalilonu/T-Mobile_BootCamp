@@ -4,17 +4,72 @@
        <script type="text/javascript" src="jquery_min.js"> </script>
        <title>Time Flies</title>
     </head>
-    <body style="background-color: rgb(143, 255, 231)">
-        <span style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-                  font-size: 40px;">Seconds on this website: </span>
-        <span style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-                  font-size: 40px;"id="time">0</span>
+    <body style="overflow: hidden">
+        <div style="position: absolute; left: 490px; top:300px;">
+            <span style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                    font-size: 40px;">Seconds on this website: </span>
+            <span style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                    font-size: 40px;"id="time">0</span>
+        </div>
+        <canvas id="canvas"></canvas>
         <script>
+            var canvas = document.getElementById("canvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            var ctx = canvas.getContext("2d");
+            var background = new Image();
+            background.src = "clouds.png";
+            var background_x = 0;
+            var background_y = 0;
+            var cat_y = canvas.height;
+            var cat = new Image();
+            cat.src = "cat1.png";
+            catCount = 1;
+            var catTime = false;
+            var forward = true;
+
+
+            ctx.drawImage(background, background_x, background_y);
             setInterval(function() {
-                console.log($('#time').html());
-                var add = parseInt( $('#time').html()) + 1;
-                $('#time').html(add);
-                }, 1000);
+            var add = parseInt( $('#time').html()) + 1;
+            $('#time').html(add);
+            if(add % 20 == 0 || add == 1) {
+                catTime = true;
+            }
+
+            }, 1000);
+
+            setInterval(function() {
+                var backward = false;
+                if (catCount == 1) forward = true;
+                if (catCount == 3) forward = false;
+                if (forward) catCount = catCount  + 1;
+                if (!forward) catCount = catCount - 1;
+                console.log(catCount);
+                
+                cat.src = "cat" + catCount + ".png";
+            }, 500);
+
+            setInterval(function(){
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            background.src = "clouds.png";
+            background_x-=4;
+            if (background_x < -2995) background_x = 0;
+            ctx.drawImage(background, background_x, background_y);
+            if (catTime){
+                ctx.drawImage(cat, 800, cat_y)
+                cat_y -= 10;
+            }
+            if (cat_y < -1000) {
+                cat_y = canvas.width;
+                catTime = false;
+                cat.src = "cat1.png";
+                catCount = 1;
+            } 
+            }, 50);
+
+                
         </script>
     </body>
 </html>
